@@ -4,26 +4,29 @@
 
 using namespace std;
 
-struct FRUITS
-{
-	string Name, Sort, Country;
-	int MinWeight, MaxWeight, Price;
-};
+void mainMenu();
+void catalog();
+void catalogFruitsVegetables();
+void catalogMilkEggs();
+void catalogBread();
+void catalogMeat();
+void catalogSasueges();
+void catalogDrinks();
+void catalogCerealsSugar();
+void catalogPasta();
+void catalogSweets();
+void catalogOilSauces();
+void catalogFruits();
+void catalogVegetables();
+void catalogBerries();
+void catalogGreenery();
+void login();
+void registration();
+void admin();
+void fruits();
+void vegetables();
 
-void MainMenu();
-void Catalog_1();
-void Catalog_fruits();
-void Catalog_vegetables();
-void Catalog_berries();
-void Catalog_greenery();
-void Login();
-void Registration();
-void Admin();
-void Fruits();
-void Vegetables();
-void CatalogFilter();
-
-void MainMenu()
+void mainMenu()
 {
 	system("cls");
 	cout << "\tГлавное меню" << endl;
@@ -32,11 +35,11 @@ void MainMenu()
 	cout << "[3] Регистрация" << endl;
 	cout << "[4] Войти от имени администратора" << endl;
 	cout << "[5] Выход" << endl;
-	int _mainmenu;
-	cin >> _mainmenu;
-	switch (_mainmenu)
+	int _mainMenu;
+	cin >> _mainMenu;
+	switch (_mainMenu)
 	{
-	case 1: Catalog_1();
+	case 1: catalog();
 		break;
 	//case 2: Login();
 		break;
@@ -49,40 +52,51 @@ void MainMenu()
 	}
 }
 
-void Catalog_vegetables()
+void catalog()
 {
-	cout << "[1] Баклажаны" << endl;
-	cout << "[2] Имбирь" << endl;
-	cout << "[3] Капуста" << endl;
-	cout << "[4] Картофель" << endl << endl;
-	cout << "[5] Лук, чеснок" << endl;
-	cout << "[6] Морковь" << endl;
-	cout << "[7] Огурцы" << endl;
-	cout << "[8] Перцы" << endl;
-	cout << "[9] Редис, редька" << endl;
-	cout << "[10] Свекла" << endl << endl;
-	cout << "[11] Томаты" << endl;
-	cout << "[12] Другие овощи" << endl << endl;
-	cout << "[13] Главное меню" << endl;
+	system("cls");
+	cout << "[1] Овощи и фрукты" << endl;
+	cout << "[2] Молоко, яйца" << endl;
+	cout << "[3] Хлеб, выпечка" << endl;
+	cout << "[4] Мясо" << endl << endl;
+	cout << "[5] Колбаса" << endl;
+	cout << "[6] Напитки" << endl;
+	cout << "[7] Крупы, сахар" << endl;
+	cout << "[8] Макароны" << endl;
+	cout << "[9] Сладости" << endl;
+	cout << "[10] Масло, соусы" << endl;
+	cout << "[11] Главное меню" << endl;
+	int _catalog;
+	cin >> _catalog;
+	switch (_catalog)
+	{
+	case 1: catalogFruitsVegetables();
+		break;
+	case 2: catalogMilkEggs();
+		break;
+	case 3: catalogBread();
+		break;
+	case 4: catalogMeat();
+		break;
+	case 5: catalogSasueges();
+		break;
+	case 6: catalogDrinks();
+		break;
+	case 7: catalogCerealsSugar();
+		break;
+	case 8: catalogPasta();
+		break;
+	case 9: catalogSweets();
+		break;
+	case 10: catalogOilSauces();
+		break;
+	case 11: system("cls");
+		catalog();
+		break;
+	}
 }
 
-void Catalog_berries()
-{
-
-}
-
-void Catalog_greenery()
-{
-	cout << "[1] Лук" << endl;
-	cout << "[2] Петрушка" << endl;
-	cout << "[3] Укроп" << endl;
-	cout << "[4] Зелень" << endl << endl;
-	cout << "[5] Салаты" << endl;
-	cout << "[6] Пряные травы" << endl << endl;
-	cout << "[7] Главное меню" << endl;
-}
-
-void Catalog_1()
+void catalogFruitsVegetables()
 {
 	system("cls");
 	cout << "[1] Овощи" << endl;
@@ -94,20 +108,76 @@ void Catalog_1()
 	cin >> _catalog_1;
 	switch (_catalog_1)
 	{
-	case 1:	Catalog_vegetables();
+	case 1:	catalogVegetables();
 		break;
-	case 2:	Catalog_fruits();
+	case 2:	catalogFruits();	
 		break;
-	case 3:	Catalog_berries();
+	case 3:	catalogBerries();
 		break;
-	case 4:	Catalog_greenery();
+	case 4:	catalogGreenery();
 		break;
-	case 5: MainMenu();
+	case 5: mainMenu();
 		break;
 	}
 }
 
-void Catalog_fruits()
+void catalogMilkEggs()
+{
+	system("cls");
+	cout << "[1] Яйца" << endl;
+	cout << "[2] Молоко" << endl;
+	cout << "[3] Кефир" << endl;
+	cout << "[4] Сыр" << endl;
+	cout << "[5] Йогурты, десерты" << endl;
+	cout << "[6] Сметана, творог" << endl;
+	cout << "[7] Главное меню" << endl;
+}
+
+void catalogBread()
+{
+	system("cls");
+	cout << "[1] Хлеб, лепешки" << endl;
+	cout << "[2] Торты, пирожные" << endl;
+	cout << "[3] Сушки, пряники" << endl;
+	cout << "[4] Главное меню" << endl;
+}
+
+void catalogVegetables()
+{
+	cout << "[1] Баклажан" << endl;
+	cout << "[2] Имбирь" << endl;
+	cout << "[3] Капуста" << endl;
+	cout << "[4] Картофель" << endl << endl;
+	cout << "[5] Лук" << endl;
+	cout << "[6] Чеснок" << endl;
+	cout << "[7] Морковь" << endl;
+	cout << "[8] Огурец" << endl;
+	cout << "[9] Перец" << endl;
+	cout << "[10] Редис" << endl;
+	cout << "[11] Свекла" << endl << endl;
+	cout << "[12] Томат" << endl;
+	cout << "[13] Главное меню" << endl;
+}
+
+void catalogBerries()
+{
+	cout << "[1] Голубика свежая" << endl;
+	cout << "[2] Рябина замороженная" << endl;
+	cout << "[3] Клубника замороженная" << endl;
+	cout << "[4] Малина замороженная" << endl;
+	cout << "[5] Вишня замороженная" << endl;
+}
+
+void catalogGreenery()
+{
+	cout << "[1] Лук" << endl;
+	cout << "[2] Петрушка" << endl;
+	cout << "[3] Укроп" << endl;
+	cout << "[4] Пекинская капуста" << endl;
+	cout << "[5] Главное меню" << endl;
+}
+
+void catalogFruits()
 {
 	system("cls");
 	cout << "[1] Авокадо" << endl;
@@ -120,52 +190,12 @@ void Catalog_fruits()
 	cout << "[8] Манго" << endl;
 	cout << "[9] Цитрусы" << endl;
 	cout << "[10] Яблоки" << endl;
-	cout << "[11] Другие фрукты" << endl << endl;
-	cout << "[12] Главное меню" << endl;
-	int _catalog;
-	string _fruitchoice;
-	cin >> _catalog;
-	switch (_catalog)
-	{
-	case 1: _fruitchoice = "avocado";
-		break;
-	case 2: _fruitchoice = "pineapple";
-		break;
-	case 3: _fruitchoice = "orange";
-		break;
-	case 4: _fruitchoice = "banana";
-		break;
-	case 5: _fruitchoice = "citruses";
-		break;
-	case 6: _fruitchoice = "pear";
-		break;
-	case 7: _fruitchoice = "kiwi";
-		break;
-	case 8: _fruitchoice = "mango";
-		break;
-	case 9: _fruitchoice = "citruses";
-		break;
-	case 10: _fruitchoice = "apple";
-		break;
-	case 11: _fruitchoice = "otherfruits";
-		break;
-	case 12: MainMenu();
-		break;
-	}
-	
-	ifstream Reading("Grocery catalog.txt");
-
-}
-
-void CatalogFilter(name)
-{
-	system("cls");
-	ifstream Reading(name)
+	cout << "[11] Главное меню" << endl;
 }
 
 int main()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	MainMenu();
+	mainMenu();
 }
