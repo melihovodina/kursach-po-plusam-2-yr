@@ -144,7 +144,23 @@ void show(string path)
 		}
 		else if (path == "Drinks.txt")
 		{
-			catalogMeat();
+			catalog();
+		}
+		else if (path == "Cereals.txt")
+		{
+			catalog();
+		}
+		else if (path == "Pasta.txt")
+		{
+			catalog();
+		}
+		else if (path == "Sweets.txt")
+		{
+			catalog();
+		}
+		else if (path == "OilSauces.txt")
+		{
+			catalog();
 		}
 	}
 }
@@ -178,7 +194,7 @@ void catalog()
 	cout << "[3] Хлеб, выпечка" << endl;
 	cout << "[4] Мясо" << endl;
 	cout << "[5] Напитки" << endl;
-	cout << "[6] Крупы, сахар" << endl;
+	cout << "[6] Крупы" << endl;
 	cout << "[7] Макароны" << endl;
 	cout << "[8] Сладости" << endl;
 	cout << "[9] Масло, соусы" << endl << endl;
@@ -197,13 +213,13 @@ void catalog()
 		break;
 	case 5: show("Drinks.txt");
 		break;
-	case 6: catalogCerealsSugar();
+	case 6: show("Cereals.txt");
 		break;
-	/*case 7: catalogPasta();
+	case 7: show("Pasta.txt");
 		break;
-	case 8: catalogSweets();
+	case 8: show("Sweets.txt");
 		break;
-	case 9: catalogOilSauces();*/
+	case 9: show("OilSauces.txt");
 		break;
 	case 10: system("cls");
 		mainMenu();
@@ -258,18 +274,6 @@ void catalogMeat()
 		catalogFruitsVegetables();
 		break;
 	}
-}
-
-void catalogCerealsSugar()
-{
-	cout << "[1] Рис" << endl;
-	cout << "[2] Крупа гречневая" << endl;
-	cout << "[3] Крупа манная" << endl;
-	cout << "[4] Мука" << endl;
-	cout << "[5] Сахар" << endl;
-	cout << "[6] Соль" << endl;
-	cout << "[4] Главное меню" << endl;
-	cout << "[4] Главное меню" << endl;
 }
 
 int main()
