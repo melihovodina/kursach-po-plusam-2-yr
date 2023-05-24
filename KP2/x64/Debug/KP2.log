@@ -1,8 +1,2 @@
 ﻿  KP2.cpp
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(72,10): error C3861: catalogMeat: идентификатор не найден
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(74,10): error C3861: catalogSasueges: идентификатор не найден
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(76,10): error C3861: catalogDrinks: идентификатор не найден
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(78,10): error C3861: catalogCerealsSugar: идентификатор не найден
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(80,10): error C3861: catalogPasta: идентификатор не найден
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(82,10): error C3861: catalogSweets: идентификатор не найден
-C:\Users\user\Documents\GitHub\kursach-po-plusam-2-yr\KP2\KP2.cpp(84,11): error C3861: catalogOilSauces: идентификатор не найден
+  KP2.vcxproj -> C:\code\learning\github\kursach-po-plusam-2-yr\x64\Debug\KP2.exe

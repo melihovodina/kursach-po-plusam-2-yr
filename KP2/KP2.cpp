@@ -1,25 +1,31 @@
 ﻿#include <iostream>
-#include <Windows.h>
+#include <windows.h>
+#include <string>
 #include <fstream>
+#include <conio.h>
+#include <stdlib.h>
 
 using namespace std;
 
+struct tovar
+{
+	string name, quantity;
+	double price;
+};
+
 void mainMenu();
+void add(string path);
+void show(string path);
+void checkTovar(string path);
 void catalog();
 void catalogFruitsVegetables();
-void catalogMilkEggs();
 void catalogBread();
 void catalogMeat();
-void catalogSasueges();
 void catalogDrinks();
 void catalogCerealsSugar();
 void catalogPasta();
 void catalogSweets();
 void catalogOilSauces();
-void catalogFruits();
-void catalogVegetables();
-void catalogBerries();
-void catalogGreenery();
 void login();
 void registration();
 void admin();
@@ -35,6 +41,7 @@ void mainMenu()
 	cout << "[3] Регистрация" << endl;
 	cout << "[4] Войти от имени администратора" << endl;
 	cout << "[5] Выход" << endl;
+	cout << "Введите цифру чтобы продолжить" << endl;
 	int _mainMenu;
 	cin >> _mainMenu;
 	switch (_mainMenu)
@@ -52,45 +59,111 @@ void mainMenu()
 	}
 }
 
+void add(string path)
+{
+	string name, quantity;
+	double price;
+	system("cls");
+	ofstream record(path, ios::app);
+	cin.ignore();
+	cout << "Введите название товара" << endl;
+	getline(cin, name);
+	record << name << endl;
+	cout << "Введите количество с измерением через пробел" << endl;
+	getline(cin, quantity);
+	record << quantity << endl;
+	cout << "Введите цену" << endl;
+	cin >> price;
+	record << price << endl;
+}
+
+void show(string path)
+{
+	system("cls");
+	ifstream read_num(path);
+	string str;
+	int k = 0;
+	while (!read_num.eof())
+	{
+		getline(read_num, str);
+		k++;
+	};
+	int num = k / 3;
+	read_num.close();
+	ifstream read(path);
+	tovar* mas = new tovar[num];
+	for (int i = 0; i < num; i++)
+	{
+		int n = i;
+		getline(read, mas[i].name);
+		cout << "[" << n+1 << "] " << mas[i].name << endl;
+		getline(read, mas[i].quantity);
+		cout << mas[i].quantity << endl;
+		read >> mas[i].price;
+		read.ignore();
+		cout << mas[i].price << "р" << endl << endl;
+	}
+	read.close();
+
+}
+
+void checkTovar(string path) 
+{
+	ifstream read_num(path);
+	string str;
+	int k = 0;
+	while (!read_num.eof())
+	{
+		getline(read_num, str);
+		k++;
+	};
+	int num = k / 3;
+	read_num.close();
+	fstream check(path);
+	string lol;
+	for (int i = 0; i < k; i++) 
+	{
+		check >> lol;
+		if (lol == "Яйца") cout << 1;
+	}
+}
+
 void catalog()
 {
 	system("cls");
 	cout << "[1] Овощи и фрукты" << endl;
 	cout << "[2] Молоко, яйца" << endl;
 	cout << "[3] Хлеб, выпечка" << endl;
-	cout << "[4] Мясо" << endl << endl;
-	cout << "[5] Колбаса" << endl;
-	cout << "[6] Напитки" << endl;
-	cout << "[7] Крупы, сахар" << endl;
-	cout << "[8] Макароны" << endl;
-	cout << "[9] Сладости" << endl;
-	cout << "[10] Масло, соусы" << endl;
-	cout << "[11] Главное меню" << endl;
+	cout << "[4] Мясо" << endl;
+	cout << "[5] Напитки" << endl;
+	cout << "[6] Крупы, сахар" << endl;
+	cout << "[7] Макароны" << endl;
+	cout << "[8] Сладости" << endl;
+	cout << "[9] Масло, соусы" << endl;
+	cout << "[10] Главное меню" << endl << endl;
 	int _catalog;
 	cin >> _catalog;
 	switch (_catalog)
 	{
 	case 1: catalogFruitsVegetables();
 		break;
-	case 2: catalogMilkEggs();
+	case 2: show("MilkEggs.txt");
 		break;
 	case 3: catalogBread();
 		break;
 	case 4: catalogMeat();
 		break;
-	case 5: catalogSasueges();
+	case 5: catalogDrinks();
 		break;
-	case 6: catalogDrinks();
+	case 6: catalogCerealsSugar();
 		break;
-	case 7: catalogCerealsSugar();
+	/*case 7: catalogPasta();
 		break;
-	case 8: catalogPasta();
+	case 8: catalogSweets();
 		break;
-	case 9: catalogSweets();
+	case 9: catalogOilSauces();*/
 		break;
-	case 10: catalogOilSauces();
-		break;
-	case 11: system("cls");
+	case 10: system("cls");
 		catalog();
 		break;
 	}
@@ -103,34 +176,23 @@ void catalogFruitsVegetables()
 	cout << "[2] Фрукты" << endl;
 	cout << "[3] Ягоды" << endl;
 	cout << "[4] Зелень" << endl << endl;
-	cout << "[5] Главное меню" << endl;
-	int _catalog_1;
-	cin >> _catalog_1;
-	switch (_catalog_1)
+	cout << "[5] Назад" << endl << endl;
+	int choose;
+	cin >> choose;
+	switch (choose)
 	{
-	case 1:	catalogVegetables();
+	case 1: show("Vegetables.txt");
 		break;
-	case 2:	catalogFruits();	
+	case 2: show("Fruits.txt");
 		break;
-	case 3:	catalogBerries();
+	case 3: show("Berries.txt");
 		break;
-	case 4:	catalogGreenery();
+	case 4: show("Greenery.txt");
 		break;
-	case 5: mainMenu();
+	case 5: system("cls");
+		catalogFruitsVegetables();
 		break;
 	}
-}
-
-void catalogMilkEggs()
-{
-	system("cls");
-	cout << "[1] Яйца" << endl;
-	cout << "[2] Молоко" << endl;
-	cout << "[3] Кефир" << endl;
-	cout << "[4] Сыр" << endl;
-	cout << "[5] Йогурты, десерты" << endl;
-	cout << "[6] Сметана, творог" << endl;
-	cout << "[7] Главное меню" << endl;
 }
 
 void catalogBread()
@@ -142,55 +204,34 @@ void catalogBread()
 	cout << "[4] Главное меню" << endl;
 }
 
-void catalogVegetables()
+void catalogMeat()
 {
-	cout << "[1] Баклажан" << endl;
-	cout << "[2] Имбирь" << endl;
-	cout << "[3] Капуста" << endl;
-	cout << "[4] Картофель" << endl << endl;
-	cout << "[5] Лук" << endl;
-	cout << "[6] Чеснок" << endl;
-	cout << "[7] Морковь" << endl;
-	cout << "[8] Огурец" << endl;
-	cout << "[9] Перец" << endl;
-	cout << "[10] Редис" << endl;
-	cout << "[11] Свекла" << endl << endl;
-	cout << "[12] Томат" << endl;
-	cout << "[13] Главное меню" << endl;
+	cout << "[1] Cвинина" << endl;
+	cout << "[2] Курица" << endl;
+	cout << "[3] Индейка" << endl;
+	cout << "[4] Говядина" << endl;
+	cout << "[5] Колбаса" << endl;
+	cout << "[6] Главное меню" << endl;
 }
 
-void catalogBerries()
+void catalogDrinks() 
 {
-	cout << "[1] Голубика свежая" << endl;
-	cout << "[2] Рябина замороженная" << endl;
-	cout << "[3] Клубника замороженная" << endl;
-	cout << "[4] Малина замороженная" << endl;
-	cout << "[5] Вишня замороженная" << endl;
+	cout << "[1] Вода" << endl;
+	cout << "[2] Газированные напитки" << endl;
+	cout << "[3] Соки" << endl;
+	cout << "[4] Главное меню" << endl;
 }
 
-void catalogGreenery()
+void catalogCerealsSugar()
 {
-	cout << "[1] Лук" << endl;
-	cout << "[2] Петрушка" << endl;
-	cout << "[3] Укроп" << endl;
-	cout << "[4] Пекинская капуста" << endl;
-	cout << "[5] Главное меню" << endl;
-}
-
-void catalogFruits()
-{
-	system("cls");
-	cout << "[1] Авокадо" << endl;
-	cout << "[2] Ананасы" << endl;
-	cout << "[3] Апельсины" << endl;
-	cout << "[4] Бананы" << endl;
-	cout << "[5] Виноград" << endl;
-	cout << "[6] Груши" << endl;
-	cout << "[7] Киви" << endl;
-	cout << "[8] Манго" << endl;
-	cout << "[9] Цитрусы" << endl;
-	cout << "[10] Яблоки" << endl;
-	cout << "[11] Главное меню" << endl;
+	cout << "[1] Рис" << endl;
+	cout << "[2] Крупа гречневая" << endl;
+	cout << "[3] Крупа манная" << endl;
+	cout << "[4] Мука" << endl;
+	cout << "[5] Сахар" << endl;
+	cout << "[6] Соль" << endl;
+	cout << "[4] Главное меню" << endl;
+	cout << "[4] Главное меню" << endl;
 }
 
 int main()
