@@ -19,18 +19,10 @@ void show(string path);
 void checkTovar(string path);
 void catalog();
 void catalogFruitsVegetables();
-void catalogBread();
 void catalogMeat();
-void catalogDrinks();
-void catalogCerealsSugar();
-void catalogPasta();
-void catalogSweets();
-void catalogOilSauces();
 void login();
 void registration();
 void admin();
-void fruits();
-void vegetables();
 
 void mainMenu()
 {
@@ -40,7 +32,7 @@ void mainMenu()
 	cout << "[2] Авторизация" << endl;
 	cout << "[3] Регистрация" << endl;
 	cout << "[4] Войти от имени администратора" << endl;
-	cout << "[5] Выход" << endl;
+	cout << "[5] Выход" << endl << endl;
 	cout << "Введите цифру чтобы продолжить" << endl;
 	int _mainMenu;
 	cin >> _mainMenu;
@@ -104,7 +96,57 @@ void show(string path)
 		cout << mas[i].price << "р" << endl << endl;
 	}
 	read.close();
-
+	int choose;
+	cout << "[1] Назад" << endl;
+	cout << "[2] Вернуться в главный католог"  << endl;
+	cin >> choose;
+	if (choose == 2)
+	{
+		catalog();
+	}
+	else if (choose == 1)
+	{
+		if (path == "Vegetables.txt")
+		{
+			catalogFruitsVegetables();
+		}
+		else if (path == "Fruits.txt")
+		{
+			catalogFruitsVegetables();
+		}
+		else if (path == "Berries.txt")
+		{
+			catalogFruitsVegetables();
+		}
+		else if (path == "Greenery.txt")
+		{
+			catalogFruitsVegetables();
+		}
+		else if (path == "MilkEggs.txt")
+		{
+			catalog();
+		}
+		else if (path == "Bread.txt")
+		{
+			catalog();
+		}
+		else if (path == "Pork.txt")
+		{
+			catalogMeat();
+		}
+		else if (path == "Chicken.txt")
+		{
+			catalogMeat();
+		}
+		else if (path == "Sauseges.txt")
+		{
+			catalogMeat();
+		}
+		else if (path == "Drinks.txt")
+		{
+			catalogMeat();
+		}
+	}
 }
 
 void checkTovar(string path) 
@@ -139,7 +181,7 @@ void catalog()
 	cout << "[6] Крупы, сахар" << endl;
 	cout << "[7] Макароны" << endl;
 	cout << "[8] Сладости" << endl;
-	cout << "[9] Масло, соусы" << endl;
+	cout << "[9] Масло, соусы" << endl << endl;
 	cout << "[10] Главное меню" << endl << endl;
 	int _catalog;
 	cin >> _catalog;
@@ -149,11 +191,11 @@ void catalog()
 		break;
 	case 2: show("MilkEggs.txt");
 		break;
-	case 3: catalogBread();
+	case 3: show("Bread.txt");
 		break;
 	case 4: catalogMeat();
 		break;
-	case 5: catalogDrinks();
+	case 5: show("Drinks.txt");
 		break;
 	case 6: catalogCerealsSugar();
 		break;
@@ -164,7 +206,7 @@ void catalog()
 	case 9: catalogOilSauces();*/
 		break;
 	case 10: system("cls");
-		catalog();
+		mainMenu();
 		break;
 	}
 }
@@ -190,36 +232,32 @@ void catalogFruitsVegetables()
 	case 4: show("Greenery.txt");
 		break;
 	case 5: system("cls");
-		catalogFruitsVegetables();
+		catalog();
 		break;
 	}
 }
 
-void catalogBread()
-{
-	system("cls");
-	cout << "[1] Хлеб, лепешки" << endl;
-	cout << "[2] Торты, пирожные" << endl;
-	cout << "[3] Сушки, пряники" << endl;
-	cout << "[4] Главное меню" << endl;
-}
-
 void catalogMeat()
 {
+	system("cls");
 	cout << "[1] Cвинина" << endl;
 	cout << "[2] Курица" << endl;
-	cout << "[3] Индейка" << endl;
-	cout << "[4] Говядина" << endl;
-	cout << "[5] Колбаса" << endl;
-	cout << "[6] Главное меню" << endl;
-}
-
-void catalogDrinks() 
-{
-	cout << "[1] Вода" << endl;
-	cout << "[2] Газированные напитки" << endl;
-	cout << "[3] Соки" << endl;
-	cout << "[4] Главное меню" << endl;
+	cout << "[3] Колбаса" << endl << endl;
+	cout << "[4] Назад" << endl << endl;
+	int choose;
+	cin >> choose;
+	switch (choose)
+	{
+	case 1: show("Pork.txt");
+		break;
+	case 2: show("Chicken.txt");
+		break;
+	case 3: show("Sauseges.txt");
+		break;
+	case 4: system("cls");
+		catalogFruitsVegetables();
+		break;
+	}
 }
 
 void catalogCerealsSugar()
