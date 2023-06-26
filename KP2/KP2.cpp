@@ -27,26 +27,33 @@ struct admin
 user* users;
 tovar* tovars;
 admin* admins;
-int usersNum, tovarsNum, adminsNum;
+int usersNum, tovarsNum, adminsNum, g;
+double orderCost;
 
 void mainMenu();
 void userMenu();
 void adminMenu();
 void add(string path);
+void del();
 void show(string path);
 void order(string path);
+void confrimOrder();
 void changeCount();
 void clear();
 void basket();
 void catalog();
-void chooseCatalog();
+void catalogPlus();
+void catalogMinus();
 void userCatalog();
+void userProfile();
 void catalogFruitsVegetables();
 void order_catalogFruitsVegetables();
-void red_catalogFruitsVegetables();
+void plus_catalogFruitsVegetables();
+void minus_catalogFruitsVegetables();
 void catalogMeat();
 void order_catalogMeat();
-void red_catalogMeat();
+void plus_catalogMeat();
+void minus_catalogMeat();
 void login();
 void adminLogin();
 void registration();
@@ -57,7 +64,9 @@ void writeHouse(string& x);
 void writeApart(string& x);
 void writePhoneNum(string y, string& x, string type, string where);
 void writePassword(string& x);
+void customAdress();
 void userInfo();
+void rewriteUsers();
 void adminInfo();
 void tovarInfo(string path);
 void basketInfo();
@@ -68,7 +77,7 @@ void mainMenu()
 	userInfo();
 
 	system("cls");
-	cout << "\tГлавное меню" << endl;
+	cout << "\t\t\tГлавное меню" << endl;
 	cout << "[1] Продуктовый каталог" << endl;
 	cout << "[2] Авторизация" << endl;
 	cout << "[3] Регистрация" << endl;
@@ -101,6 +110,7 @@ void mainMenu()
 		case 27: 
 			flag = true;
 			system("cls");
+			exit(0);
 			break;
 		}
 	}
@@ -109,8 +119,10 @@ void mainMenu()
 void userMenu()
 {
 	system("cls");
+	cout << "\t\t\t Меню пользователя" << endl;
 	cout << "[1] Продуктовый каталог" << endl;
-	cout << "[2] Корзина" << endl << endl;
+	cout << "[2] Корзина" << endl;
+	cout << "[3] Профиль" << endl << endl;
 	cout << "[Esc] Выход" << endl;
 	char choose;
 	bool flag;
@@ -128,8 +140,13 @@ void userMenu()
 			flag = true;
 			basket();
 			break;
+		case 51:
+			flag = true;
+			userProfile();
+			break;
 		case 27:
 			flag = true;
+			ofstream record("Basket.txt");
 			mainMenu();
 			break;
 		}
@@ -139,8 +156,10 @@ void userMenu()
 void adminMenu()
 {
 	system("cls");
+	cout << "\t\t\t Меню администратора" << endl;
 	cout << "[1] Добавить новый товар" << endl;
-	cout << "[2] Посмотреть список пользоватей" << endl << endl;
+	cout << "[2] Удалить товар" << endl;
+	cout << "[3] Посмотреть список пользоватей" << endl << endl;
 	cout << "[Esc] Выйти" << endl;
 	char choose;
 	bool flag;
@@ -152,11 +171,11 @@ void adminMenu()
 		{
 		case 49:
 			flag = true;
-			chooseCatalog();
+			catalogPlus();
 			break;
-			//case 50: 
+		case 50: 
 			flag = true;
-			//Login();
+			catalogMinus();
 			break;
 			//case 51: 
 			flag = true;
@@ -180,24 +199,45 @@ void add(string path)
 	string name, si;
 	double quantity, price;
 	system("cls");
-	ofstream record(path, ios::app);
 	cout << "Введите название товара" << endl;
+	ofstream record(path, ios::app);
 	getline(cin, name);
-	record << name << endl;
+	if (size(name) == 0)
+	{
+		clear();
+	}
+	while (size(name) == 0);
+	if (name[0] >= 'а' && name[0] <= 'я')
+	{
+		name[0] = 'А' + (name[0] - 'а');
+	}
+	if (name[0] == 'ё')
+	{
+		name[0] = 'Ё';
+	}
+	if (name == "1")
+	{
+		catalogPlus();
+	}
+	else
+	{
+		record << name << endl;
+	}
+	cout << "Введите единицу измерения товара" << endl;
+	cin >> si;
 	cout << "Введите количество (только цифра)" << endl;
 	cin >> quantity;
 	record << quantity;
-	cout << "Введите единицу измерения" << endl;
-	cin >> si;
-	record << si << endl;
+	record << " " << si << endl;
 	cout << "Введите цену" << endl;
 	cin >> price;
 	record << price << endl;
 	char choose;
 	bool flag;
 	flag = false;
-	cout << "[Esc] Вернуться в главное меню" << endl;
-	cout << "[1] Добавить еще один товар" << endl;
+	cout << endl;
+	cout << "Товар добавлен" << endl << endl;
+	cout << "[Esc] Вернуться в меню" << endl;
 	while (flag == false)
 	{
 		choose = _getch();
@@ -205,12 +245,115 @@ void add(string path)
 		{
 		case 27:
 			flag = true;
-			mainMenu();
+			adminMenu();
 			break;
-		case 49:
-			flag = true;
-			add(path);
-			break;
+		}
+	}
+}
+
+void del(string path)
+{
+	system("cls");
+	tovarInfo(path);
+	for (int i = 0; i < tovarsNum; i++)
+	{
+		int n = i;
+		cout << tovars[i].name << endl;
+		cout << tovars[i].quantity;
+		cout << tovars[i].si << endl;
+		cout << tovars[i].price << "р" << endl << endl;
+	}
+	string str;
+	cout << "Введите название товара, которое хотите удалить: ";
+	do
+	{
+		getline(cin, str);
+		if (size(str) == 0)
+		{
+			clear();
+		}
+	} while (size(str) == 0);
+	if (str[0] >= 'а' && str[0] <= 'я')
+	{
+		str[0] = 'А' + (str[0] - 'а');
+	}
+	if (str[0] == 'ё')
+	{
+		str[0] = 'Ё';
+	}
+	if (str == "1")
+	{
+		adminMenu();
+	}
+	else
+	{
+		int l = 0, j = 0;
+		for (int i = 0; i < tovarsNum; i++)
+		{
+			if (str == tovars[i].name)
+			{
+				l++;
+				j = i;
+			}
+		}
+		if (l != 0)
+		{
+			cout << "Вы точно хотите удалить товар " << tovars[j].name << "?" << endl << endl;
+			cout << "[1] Да" << endl;
+			cout << "[2] Нет" << endl;
+			char choose;
+			bool flag;
+			flag = false;
+			while (flag == false)
+			{
+				choose = _getch();
+				switch (choose)
+				{
+				case 49:
+				{
+					flag = true;
+					ofstream record(path);
+					for (int i = 0; i < tovarsNum; i++)
+					{
+						if (tovars[i].name != tovars[j].name)
+						{
+							record << tovars[i].name << endl;
+							record << tovars[i].quantity;
+							record << " " << tovars[i].si << endl;
+							record << tovars[i].price << endl;
+						}
+					}
+					system("cls");
+					cout << "Товар удален" << endl << endl;
+					char choose;
+					bool flag1;
+					flag1 = false;
+					cout << "[Esc] Вернуться в меню" << endl;
+					while (flag1 == false)
+					{
+						choose = _getch();
+						switch (choose)
+						{
+						case 27:
+							flag1 = true;
+							adminMenu();
+							break;
+						}
+					}
+					break;
+				}
+				case 50:
+					flag = true;
+					del(path);
+					break;
+				}
+			}
+		}
+		else
+		{
+			cout << "Товар не найден";
+			_getch();
+			del(path);
 		}
 	}
 }
@@ -514,6 +657,97 @@ void order(string path)
 	}
 }
 
+void confrimOrder()
+{
+	system("cls");
+	userInfo();
+	cout << "Доставить заказ по адресу: г." << users[g].city << " ул." << users[g].street << " д." << users[g].house << " кв." << users[g].apart << " ?" << endl << endl;
+	cout << "[Enter] Подтвердить заказ" << endl;
+	cout << "[1] Изменить адрес доставки" << endl;
+	cout << "[Esc] Назад" << endl;
+	char choose;
+	bool flag;
+	flag = false;
+	while (flag == false)
+	{
+		choose = _getch();
+		switch (choose)
+		{
+		case 13:
+		{
+			flag = true;
+			system("cls");
+			cout << "Заказ принят" << endl;
+			cout << "Общая сумма заказа: " << orderCost << "р" << endl;
+			cout << "Адрес доставки г." << users[g].city << " ул." << users[g].street << " д." << users[g].house << " кв." << users[g].apart << endl << endl;
+			cout << "[Enter] Вернуться в меню" << endl;
+			cout << "[1] Показать список продуктов" << endl;
+			char choose;
+			bool flag1;
+			flag1 = false;
+			while (flag1 == false)
+			{
+				choose = _getch();
+				switch (choose)
+				{
+				case 13:
+				{
+					flag1 = true;
+					ofstream record("Basket.txt");
+					userMenu();
+					break;
+				}
+				case 49:
+				{
+					flag1 = true;
+					clear();
+					clear();
+					basketInfo();
+					for (int i = 0; i < tovarsNum; i++)
+					{
+						int n = i;
+						cout << tovars[i].name << " ";
+						cout << tovars[i].quantity;
+						cout << tovars[i].si << endl;
+						cout << tovars[i].count;
+						cout << tovars[i].si2 << endl;
+						cout << tovars[i].price << "р" << endl << endl;
+					}
+					cout << "[Enter] Вернуться в меню" << endl;
+					char choose;
+					bool flag2;
+					flag2 = false;
+					while (flag2 == false)
+					{
+						choose = _getch();
+						switch (choose)
+						{
+						case 13:
+							flag2 = true;
+							ofstream record("Basket.txt");
+							userMenu();
+							break;
+						}
+					}
+					break;
+				}
+				}
+			}
+			break;
+		}
+		case 49:
+		{
+			flag = true;
+			customAdress();
+		}
+		case 27:
+			flag = true;
+			basket();
+			break;
+		}
+	}
+}
+
 void changeCount()
 {
 	string str;
@@ -539,7 +773,7 @@ void changeCount()
 	}
 	if (str == "1")
 	{
-		userMenu();
+		basket();
 	}
 	else
 	{
@@ -640,6 +874,8 @@ void changeCount()
 					cin.ignore();
 					clear();
 					clear();
+					clear();
+					clear();
 					cout << "Вы хотите убрать: ";
 					cout << tovars[j].name;
 					if (tovars[j].si2 == "кг")
@@ -684,6 +920,8 @@ void changeCount()
 							{
 								cout << "Вы ввели неверное количество, попробуйте еще раз" << endl;
 								_getch();
+								clear();
+								clear();
 								changeCount();
 							}
 							else if (count < tovars[j].count)
@@ -754,6 +992,7 @@ void basket()
 {
 	system("cls");
 	basketInfo();
+	orderCost = 0;
 	if (tovarsNum == 0) 
 	{
 		cout << "Ваша корзина пуста" << endl << endl;
@@ -784,7 +1023,9 @@ void basket()
 			cout << tovars[i].count;
 			cout << tovars[i].si2 << endl;
 			cout << tovars[i].price << "р" << endl << endl;
+			orderCost += tovars[i].price;
 		}
+		cout << "Общая сумма заказа: " << orderCost << "р" << endl << endl;
 		char choose;
 		bool flag;
 		flag = false;
@@ -798,7 +1039,7 @@ void basket()
 			{
 			case 13:
 				flag = true;
-				catalogFruitsVegetables();
+				confrimOrder();
 				break;
 			case 49:
 				flag = true;
@@ -881,6 +1122,7 @@ void catalog()
 void userCatalog()
 {
 	system("cls");
+	cout << "\t\t\t Продуктовый каталог" << endl;
 	cout << "[1] Овощи и фрукты" << endl;
 	cout << "[2] Молоко, яйца" << endl;
 	cout << "[3] Хлеб" << endl;
@@ -943,9 +1185,137 @@ void userCatalog()
 	}
 }
 
-void chooseCatalog()
+void userProfile()
 {
 	system("cls");
+	cout << "\t\t\tПрофиль" << endl << endl;
+	cout << "Фамилия: " << users[g].surname << endl;
+	cout << "Имя: " << users[g].name << endl;
+	cout << "Отчество: " << users[g].patronymic << endl;
+	cout << "Пол: " << users[g].sex << endl;
+	cout << "Дата рождения: " << users[g].birthDate << endl;
+	cout << "Страна: " << users[g].country << endl;
+	cout << "Город: " << users[g].city << endl;
+	cout << "Улица: " << users[g].street << endl;
+	cout << "Дом: " << users[g].house << endl;
+	cout << "Квартира: " << users[g].apart << endl;
+	cout << "Номер телефона: +375" << users[g].phone << endl << endl;
+	cout << "[1] Изменить информицию" << endl;
+	cout << "[Esc] Вернуться назад";
+	char choose;
+	bool flag = false;
+	while (flag == false)
+	{
+		choose = _getch();
+		switch (choose)
+		{
+		case 49:
+		{
+			flag = true;
+			system("cls");
+			cout << "[1]" << "Фамилия: " << users[g].surname << endl;
+			cout << "[2]" << "Имя: " << users[g].name << endl;
+			cout << "[3]" << "Отчество: " << users[g].patronymic << endl;
+			cout << "[4]" << "Пол: " << users[g].sex << endl;
+			cout << "[5]" << "Дата рождения: " << users[g].birthDate << endl;
+			cout << "[6]" << "Страна: " << users[g].country << endl;
+			cout << "[7]" << "Город: " << users[g].city << endl;
+			cout << "[8]" << "Улица: " << users[g].street << endl;
+			cout << "[9]" << "Дом: " << users[g].house << endl;
+			cout << "[10]" << "Квартира: " << users[g].apart << endl;
+			cout << "[11]" << "Номер телефона: +375" << users[g].phone << endl;
+			cout << "[12]" << "Пароль" << endl << endl;
+			int point;
+			bool flag1;
+			flag1 = false;
+			cout << "Введите номер пункта который хотите изменить " << endl << endl;
+			cout << "Введите 0 чтобы вернуться назад" << endl;
+			cout << "\033[2F";
+			while (flag1 == false)
+			{
+				cout << "Пункт: ";
+				cin >> point;
+				cin.ignore();
+				system("cls");
+				cout << "Введите новые данные ";
+				switch (point)
+				{
+				case 0:
+					flag1 = true;
+					userProfile();
+					break;
+				case 1:
+					flag1 = true;
+					writeStr("Фамилия", users[g].surname, "every");
+					break;
+				case 2:
+					flag1 = true;
+					writeStr("Имя", users[g].name, "every");
+					break;
+				case 3:
+					flag1 = true;
+					writeStr("Отчество", users[g].patronymic, "every");
+					break;
+				case 4:
+					flag1 = true;
+					chooseSex(users[g].sex);
+					break;
+				case 5:
+					flag1 = true;
+					writeStr("Страна", users[g].country, "first");
+					break;
+				case 6:
+					flag1 = true;
+					writeStr("Город", users[g].city, "first");
+					break;
+				case 7:
+					flag1 = true;
+					writeStr("Улица", users[g].street, "first");
+					break;
+				case 8:
+					flag1 = true;
+					writeHouse(users[g].house);
+					break;
+				case 9:
+					flag1 = true;
+					writeApart(users[g].apart);
+					break;
+				case 10:
+					flag1 = true;
+					writePhoneNum("Номер телефона: +375", users[g].phone, "reg", "nelogin");
+					break;
+				case 11:
+					flag = true;
+					writePassword(users[g].password);
+					break;
+				}
+			}
+			break;
+		}
+		case 27:
+		{
+			flag = true;
+			userMenu();
+			break;
+		}
+		}
+	}
+	rewriteUsers();
+	system("cls");
+	cout << "Данные успешно изменены" << endl << endl;
+	cout << "[Esc] Вернуться в профиль";
+	char choose1;
+	do
+	{
+		choose1 = _getch();
+		if (choose1 == 27) userProfile();
+	} while (choose1 != 27);
+}
+
+void catalogPlus()
+{
+	system("cls");
+	cout << "\t\t\t Добавление товара" << endl;
 	cout << "Выберите католог, в который хотите добавить новый товар" << endl << endl;
 	cout << "[1] Овощи, фрукты" << endl;
 	cout << "[2] Молоко, яйца" << endl;
@@ -966,7 +1336,7 @@ void chooseCatalog()
 		{
 		case 49: 
 			flag = true;
-			red_catalogFruitsVegetables();
+			plus_catalogFruitsVegetables();
 			break;
 		case 50:
 		{
@@ -988,7 +1358,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1014,7 +1384,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1022,7 +1392,7 @@ void chooseCatalog()
 		}
 		case 52:
 			flag = true;
-			red_catalogMeat();
+			plus_catalogMeat();
 			break;
 		case 53:
 		{
@@ -1044,7 +1414,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1070,7 +1440,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1096,7 +1466,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1122,7 +1492,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1148,7 +1518,7 @@ void chooseCatalog()
 					break;
 				case 50: 
 					flag1 = true;
-					chooseCatalog();
+					catalogPlus();
 					break;
 				}
 			}
@@ -1163,9 +1533,76 @@ void chooseCatalog()
 	}
 }
 
+void catalogMinus()
+{
+	system("cls");
+	cout << "\t\t\t Удаление товара" << endl;
+	cout << "[1] Овощи и фрукты" << endl;
+	cout << "[2] Молоко, яйца" << endl;
+	cout << "[3] Хлеб" << endl;
+	cout << "[4] Мясо" << endl;
+	cout << "[5] Напитки" << endl;
+	cout << "[6] Крупы" << endl;
+	cout << "[7] Макароны" << endl;
+	cout << "[8] Сладости" << endl;
+	cout << "[9] Масло, соусы" << endl << endl;
+	cout << "[Esc] Вернуться в меню" << endl;
+	char choose;
+	bool flag = false;
+	while (flag == false)
+	{
+		choose = _getch();
+		switch (choose)
+		{
+		case 49:
+			flag = true;
+			minus_catalogFruitsVegetables();
+			break;
+		case 50:
+			flag = true;
+			del("MilkEggs.txt");
+			break;
+		case 51:
+			flag = true;
+			del("Bread.txt");
+			break;
+		case 52:
+			flag = true;
+			minus_catalogMeat();
+			break;
+		case 53:
+			flag = true;
+			del("Drinks.txt");
+			break;
+		case 54:
+			flag = true;
+			del("Cereals.txt");
+			break;
+		case 55:
+			flag = true;
+			del("Pasta.txt");
+			break;
+		case 56:
+			flag = true;
+			del("Sweets.txt");
+			break;
+		case 57:
+			flag = true;
+			del("OilSauces.txt");
+			break;
+		case 27:
+			flag = true;
+			system("cls");
+			adminMenu();
+			break;
+		}
+	}
+}
+
 void catalogFruitsVegetables()
 {
 	system("cls");
+	cout << "\t\t\t Продуктовый каталог" << endl;
 	cout << "[1] Овощи" << endl;
 	cout << "[2] Фрукты" << endl;
 	cout << "[3] Ягоды" << endl;
@@ -1206,6 +1643,7 @@ void catalogFruitsVegetables()
 void order_catalogFruitsVegetables()
 {
 	system("cls");
+	cout << "\t\t\t Продуктовый каталог" << endl;
 	cout << "[1] Овощи" << endl;
 	cout << "[2] Фрукты" << endl;
 	cout << "[3] Ягоды" << endl;
@@ -1243,9 +1681,10 @@ void order_catalogFruitsVegetables()
 	}
 }
 
-void red_catalogFruitsVegetables()
+void plus_catalogFruitsVegetables()
 {
 	system("cls");
+	cout << "\t\t\t Добавление товара" << endl;
 	cout << "[1] Овощи" << endl;
 	cout << "[2] Фрукты" << endl;
 	cout << "[3] Ягоды" << endl;
@@ -1278,7 +1717,7 @@ void red_catalogFruitsVegetables()
 					break;
 				case 50:
 					flag1 = true;
-					red_catalogFruitsVegetables();
+					plus_catalogFruitsVegetables();
 					break;
 				}
 			}
@@ -1301,7 +1740,7 @@ void red_catalogFruitsVegetables()
 				case 49: add("Fruits.txt");
 					flag1 = true;
 					break;
-				case 50: red_catalogFruitsVegetables();
+				case 50: plus_catalogFruitsVegetables();
 					flag1 = true;
 					break;
 				}
@@ -1325,7 +1764,7 @@ void red_catalogFruitsVegetables()
 				case 49: add("Berries.txt");
 					flag1 = true;
 					break;
-				case 50: red_catalogFruitsVegetables();
+				case 50: plus_catalogFruitsVegetables();
 					flag1 = true;
 					break;
 				}
@@ -1349,7 +1788,7 @@ void red_catalogFruitsVegetables()
 				case 49: add("Greenery.txt");
 					flag1 = true;
 					break;
-				case 50: red_catalogFruitsVegetables();
+				case 50: plus_catalogFruitsVegetables();
 					flag1 = true;
 					break;
 				}
@@ -1359,7 +1798,48 @@ void red_catalogFruitsVegetables()
 		case 27: 
 			flag = true;
 			system("cls");
-			chooseCatalog();
+			catalogPlus();
+			break;
+		}
+	}
+}
+
+void minus_catalogFruitsVegetables()
+{
+	system("cls");
+	cout << "\t\t\t Удаление товара" << endl;
+	cout << "[1] Овощи" << endl;
+	cout << "[2] Фрукты" << endl;
+	cout << "[3] Ягоды" << endl;
+	cout << "[4] Зелень" << endl << endl;
+	cout << "[Esc] Назад" << endl;
+	char choose;
+	bool flag = false;
+	while (flag == false)
+	{
+		choose = _getch();
+		switch (choose)
+		{
+		case 49:
+			flag = true;
+			del("Vegetables.txt");
+			break;
+		case 50:
+			flag = true;
+			del("Fruits.txt");
+			break;
+		case 51:
+			flag = true;
+			del("Berries.txt");
+			break;
+		case 52:
+			flag = true;
+			del("Greenery.txt");
+			break;
+		case 27:
+			flag = true;
+			system("cls");
+			catalogMinus();
 			break;
 		}
 	}
@@ -1368,6 +1848,7 @@ void red_catalogFruitsVegetables()
 void catalogMeat()
 {
 	system("cls");
+	cout << "\t\t\t Продуктовый каталог" << endl;
 	cout << "[1] Cвинина" << endl;
 	cout << "[2] Курица" << endl;
 	cout << "[3] Колбаса" << endl << endl;
@@ -1399,6 +1880,7 @@ void catalogMeat()
 void order_catalogMeat()
 {
 	system("cls");
+	cout << "\t\t\t Продуктовый каталог" << endl;
 	cout << "[1] Cвинина" << endl;
 	cout << "[2] Курица" << endl;
 	cout << "[3] Колбаса" << endl << endl;
@@ -1427,9 +1909,10 @@ void order_catalogMeat()
 	}
 }
 
-void red_catalogMeat()
+void plus_catalogMeat()
 {
 	system("cls");
+	cout << "\t\t\t Добавление товара" << endl;
 	cout << "[1] Cвинина" << endl;
 	cout << "[2] Курица" << endl;
 	cout << "[3] Колбаса" << endl << endl;
@@ -1461,7 +1944,7 @@ void red_catalogMeat()
 					break;
 				case 50: 
 					flag1 = true;
-					red_catalogMeat();
+					plus_catalogMeat();
 					break;
 				}
 			}
@@ -1484,7 +1967,7 @@ void red_catalogMeat()
 				case 49: add("Chicken.txt");
 					flag1 = true;
 					break;
-				case 50: red_catalogMeat();
+				case 50: plus_catalogMeat();
 					flag1 = true;
 					break;
 				}
@@ -1508,7 +1991,7 @@ void red_catalogMeat()
 				case 49: add("Sauseges.txt");
 					flag1 = true;
 					break;
-				case 50: red_catalogMeat();
+				case 50: plus_catalogMeat();
 					flag1 = true;
 					break;
 				}
@@ -1518,7 +2001,39 @@ void red_catalogMeat()
 		case 27: 
 			flag = true;
 			system("cls");
-			chooseCatalog();
+			catalogPlus();
+			break;
+		}
+	}
+}
+
+void minus_catalogMeat()
+{
+	system("cls");
+	cout << "\t\t\t Удаление товара" << endl;
+	cout << "[1] Cвинина" << endl;
+	cout << "[2] Курица" << endl;
+	cout << "[3] Колбаса" << endl << endl;
+	cout << "[Esc] Назад" << endl;
+	char choose;
+	bool flag = false;
+	while (flag == false)
+	{
+		choose = _getch();
+		switch (choose)
+		{
+		case 49: del("Pork.txt");
+			flag = true;
+			break;
+		case 50: del("Chicken.txt");
+			flag = true;
+			break;
+		case 51: del("Sauseges.txt");
+			flag = true;
+			break;
+		case 27: system("cls");
+			flag = true;
+			catalogMinus();
 			break;
 		}
 	}
@@ -1533,6 +2048,7 @@ void registration()
 	cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
 	cout << "Введите 0 чтобы вернуться в главное меню" << endl;
 	cout << "\033[21F";
+	cout << "\t\t\t Регистрация" << endl;
 	writeStr("Фамилия", surname, "every");
 	writeStr("Имя", name, "every");
 	writeStr("Отчество", patronymic, "every");
@@ -1613,7 +2129,10 @@ void writeStr(string x, string& y, string z)
 	{
 		if (y == "0")
 		{
-			mainMenu();
+			if (z == "rec")
+				mainMenu();
+			else if (z == "user")
+				userMenu;
 		}
 		else
 		{
@@ -2016,6 +2535,122 @@ void writePassword(string& x)
 	}
 }
 
+void rewriteUsers()
+{
+	ofstream record("Users.txt");
+	for (int i = 0; i < usersNum; i++)
+	{
+		record << users[i].surname << "\n";
+		record << users[i].name << "\n";
+		record << users[i].patronymic << "\n";
+		record << users[i].sex << "\n";
+		record << users[i].birthDate << "\n";
+		record << users[i].country << "\n";
+		record << users[i].city << "\n";
+		record << users[i].street << "\n";
+		record << users[i].house << "\n";
+		record << users[i].apart << "\n";
+		record << users[i].phone << "\n";
+		record << users[i].password << "\n";
+	}
+	record.close();
+}
+
+void customAdress()
+{
+	system("cls");
+	string city, street, house, apart;
+	cout << "Введите новый адрес доставки: " << endl;
+	writeStr("Город", city, "first");
+	writeStr("Улица", street, "first");
+	writeHouse(house);
+	writeApart(apart);
+	cout << "г." << city << " ул." << street << " д." << house << " кв." << apart << endl;
+	cout << "Адрес указан верно?" << endl << endl;
+	cout << "[1] Да" << endl;
+	cout << "[2] Нет" << endl;
+	cout << "[Esc] Назад" << endl;
+	char choose;
+	bool flag;
+	flag = false;
+	while (flag == false)
+	{
+		choose = _getch();
+		switch (choose)
+		{
+		case 49:
+		{
+			flag = true;
+			system("cls");
+			cout << "Заказ принят" << endl;
+			cout << "Общая сумма заказа: " << orderCost << "р" << endl;
+			cout << "Адрес доставки г." << city << " ул." << street << " д." << house << " кв." << apart << endl << endl;
+			cout << "[Enter] Вернуться в меню" << endl;
+			cout << "[1] Показать список продуктов" << endl;
+			char choose;
+			bool flag1;
+			flag1 = false;
+			while (flag1 == false)
+			{
+				choose = _getch();
+				switch (choose)
+				{
+				case 13:
+				{
+					flag1 = true;
+					ofstream record("Basket.txt");
+					userMenu();
+					break;
+				}
+				case 49:
+				{
+					flag1 = true;
+					clear();
+					clear();
+					basketInfo();
+					for (int i = 0; i < tovarsNum; i++)
+					{
+						int n = i;
+						cout << tovars[i].name << " ";
+						cout << tovars[i].quantity;
+						cout << tovars[i].si << endl;
+						cout << tovars[i].count;
+						cout << tovars[i].si2 << endl;
+						cout << tovars[i].price << "р" << endl << endl;
+					}
+					cout << "[Enter] Вернуться в меню" << endl;
+					char choose;
+					bool flag2;
+					flag2 = false;
+					while (flag2 == false)
+					{
+						choose = _getch();
+						switch (choose)
+						{
+						case 13:
+							flag2 = true;
+							ofstream record("Basket.txt");
+							userMenu();
+							break;
+						}
+					}
+					break;
+				}
+				}
+			}
+		}
+		case 50:
+			flag = true;
+			customAdress();
+			break;
+		case 27:
+			flag = true;
+			confrimOrder();
+			break;
+		}
+	}
+}
+
 void login()
 {
 	userInfo();
@@ -2026,6 +2661,7 @@ void login()
 	cout << endl << endl << endl << endl;
 	cout << "Введите 0 чтобы вернуться в главное меню" << endl;
 	cout << "\033[7F";
+	cout << "\t\t\t Авторизация" << endl;
 	writePhoneNum("Номер телефона: +375", userPhone, "search", "main");
 	for (int i = 0; i < usersNum; i++)
 	{
@@ -2033,6 +2669,7 @@ void login()
 		{
 			k++;
 			j = i;
+			g = i;
 		}
 	}
 	if (k != 0)
@@ -2045,7 +2682,7 @@ void login()
 		}
 		else
 		{
-			cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите ENTER чтобы повторить попытку." << endl;
+			cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
 			_getch();
 			clear();
 			clear();
@@ -2058,7 +2695,7 @@ void login()
 			}
 			else
 			{
-				cout << "Неверный пароль. У вас осталось 1 попытки" << endl << "Нажмите ENTER чтобы повторить попытку." << endl;
+				cout << "Неверный пароль. У вас осталось 1 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
 				_getch();
 				clear();
 				clear();
@@ -2077,7 +2714,7 @@ void login()
 	}
 	else
 	{
-		cout << "Пользователь с этим номером не найден." << endl << "Нажмите ENTER чтобы повторить." << endl;
+		cout << "Пользователь с этим номером не найден." << endl << "Нажмите Enter чтобы повторить." << endl;
 		_getch();
 		login();
 	}
@@ -2093,7 +2730,8 @@ void adminLogin()
 	cout << endl << endl << endl << endl;
 	cout << "Введите 0 чтобы вернуться в главное меню" << endl;
 	cout << "\033[7F";
-	cout << "логин: ";
+	cout << "\t\t\t Вход от имени администратора" << endl;
+	cout << "Логин: ";
 	cin >> login;
 	cin.ignore();
 	for (int i = 0; i < adminsNum; i++)
@@ -2114,7 +2752,7 @@ void adminLogin()
 		}
 		else
 		{
-			cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите ENTER чтобы повторить попытку." << endl;
+			cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
 			_getch();
 			clear();
 			clear();
@@ -2127,7 +2765,7 @@ void adminLogin()
 			}
 			else
 			{
-				cout << "Неверный пароль. У вас осталось 1 попытки" << endl << "Нажмите ENTER чтобы повторить попытку." << endl;
+				cout << "Неверный пароль. У вас осталось 1 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
 				_getch();
 				clear();
 				clear();
@@ -2146,7 +2784,7 @@ void adminLogin()
 	}
 	else
 	{
-		cout << "Пользователь с этим номером не найден." << endl << "Нажмите ENTER чтобы повторить." << endl;
+		cout << "Пользователь с этим номером не найден." << endl << "Нажмите Enter чтобы повторить." << endl;
 		_getch();
 		adminLogin();
 	}

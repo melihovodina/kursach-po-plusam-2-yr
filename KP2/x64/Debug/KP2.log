@@ -1,9 +1,10 @@
 ﻿  KP2.cpp
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1718,28): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1809,4): warning C4551: в вызове функции отсутствует список аргументов
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1815,30): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1822,28): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1828,32): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1868,27): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(1913,28): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2135,5): warning C4551: в вызове функции отсутствует список аргументов
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2233,28): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2324,4): warning C4551: в вызове функции отсутствует список аргументов
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2330,30): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2337,28): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2343,32): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2383,27): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\code\learning\github\kursach-po-plusam-2-yr\KP2\KP2.cpp(2428,28): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
   KP2.vcxproj -> C:\code\learning\github\kursach-po-plusam-2-yr\x64\Debug\KP2.exe
