@@ -16,7 +16,7 @@ struct tovar
 struct user
 {
 	string name, surname, patronymic, sex, birthDate, country, city, street, house, apart,
-	phone, password;
+		phone, password;
 };
 
 struct admin
@@ -54,10 +54,11 @@ void catalogMeat();
 void order_catalogMeat();
 void plus_catalogMeat();
 void minus_catalogMeat();
+void showUsers();
 void login();
 void adminLogin();
 void registration();
-void writeStr(string x, string& y, string z);
+void writeStr(string x, string& y, string z, string where);
 void chooseSex(string& x);
 void writeBirthDate(string& x);
 void writeHouse(string& x);
@@ -73,7 +74,7 @@ void basketInfo();
 
 
 void mainMenu()
-{;
+{
 	userInfo();
 
 	system("cls");
@@ -86,20 +87,20 @@ void mainMenu()
 	char choose;
 	bool flag;
 	flag = false;
-	while(flag == false)
+	while (flag == false)
 	{
 		choose = _getch();
 		switch (choose)
 		{
-		case 49: 
+		case 49:
 			flag = true;
 			catalog();
 			break;
-		case 50: 
+		case 50:
 			flag = true;
 			login();
 			break;
-		case 51: 
+		case 51:
 			flag = true;
 			registration();
 			break;
@@ -107,7 +108,7 @@ void mainMenu()
 			flag = true;
 			adminLogin();
 			break;
-		case 27: 
+		case 27:
 			flag = true;
 			system("cls");
 			exit(0);
@@ -173,19 +174,15 @@ void adminMenu()
 			flag = true;
 			catalogPlus();
 			break;
-		case 50: 
+		case 50:
 			flag = true;
 			catalogMinus();
 			break;
-			//case 51: 
+		case 51:
 			flag = true;
-			//Registration();
+			showUsers();
 			break;
-			//case 52: 
-			flag = true;
-			//Admin();
-			break;
-		case 27: 
+		case 27:
 			flag = true;
 			system("cls");
 			mainMenu();
@@ -199,56 +196,35 @@ void add(string path)
 	string name, si;
 	double quantity, price;
 	system("cls");
-	cout << "Введите название товара" << endl;
 	ofstream record(path, ios::app);
-	getline(cin, name);
-	if (size(name) == 0)
-	{
-		clear();
+	writeStr("Введите название товара", name, "first", "admin");
+	while (true) {
+		cout << "Введите единицу измерения товара: ";
+		getline(cin, si);
+		if (size(si) == 0) {
+			clear(); continue;
+		}
+		else break;
 	}
-	while (size(name) == 0);
-	if (name[0] >= 'а' && name[0] <= 'я')
-	{
-		name[0] = 'А' + (name[0] - 'а');
-	}
-	if (name[0] == 'ё')
-	{
-		name[0] = 'Ё';
-	}
-	if (name == "1")
-	{
-		catalogPlus();
-	}
-	else
-	{
-		record << name << endl;
-	}
-	cout << "Введите единицу измерения товара" << endl;
-	cin >> si;
-	cout << "Введите количество (только цифра)" << endl;
+	cout << "Введите количество (только цифра): ";
 	cin >> quantity;
-	record << quantity;
-	record << " " << si << endl;
-	cout << "Введите цену" << endl;
+	cin.ignore();
+	cout << "Введите цену: ";
 	cin >> price;
-	record << price << endl;
+	cin.ignore();
 	char choose;
 	bool flag;
 	flag = false;
 	cout << endl;
+	record << name << endl;
+	record << quantity;
+	record << " " << si << endl;
+	record << price << endl;
 	cout << "Товар добавлен" << endl << endl;
 	cout << "[Esc] Вернуться в меню" << endl;
-	while (flag == false)
-	{
-		choose = _getch();
-		switch (choose)
-		{
-		case 27:
-			flag = true;
-			adminMenu();
-			break;
-		}
-	}
+	tovarInfo(path);
+	do choose = _getch(); while (choose != 27);
+	adminMenu();
 }
 
 void del(string path)
@@ -264,8 +240,8 @@ void del(string path)
 		cout << tovars[i].price << "р" << endl << endl;
 	}
 	string str;
-	cout << "Введите название товара, которое хотите удалить: ";
-	do
+	cout << "Введите название товара, который хотите удалить: ";
+	do// это все можно заменить одной строчкой
 	{
 		getline(cin, str);
 		if (size(str) == 0)
@@ -286,7 +262,7 @@ void del(string path)
 		adminMenu();
 	}
 	else
-	{
+	{//----------------------------------
 		int l = 0, j = 0;
 		for (int i = 0; i < tovarsNum; i++)
 		{
@@ -459,19 +435,16 @@ void order(string path)
 		cout << tovars[i].si << endl;
 		cout << tovars[i].price << "р" << endl << endl;
 	}
-	cout << endl << endl;
+	cout << endl << endl << endl;
 	cout << "[0] Назад" << endl;
 	cout << "[1] Вернуться в главное меню" << endl;
-	cout << "\033[3F";
+	cout << "\033[4F";
 	string str;
-	cout << "Введите название товара, который хотите добавить в корзину: ";
 	do
 	{
+		cout << "Введите название товара, который хотите добавить в корзину: ";
 		getline(cin, str);
-		if (size(str) == 0)
-		{
-			clear();
-		}
+		if (size(str) == 0) clear();
 	} while (size(str) == 0);
 	if (str[0] >= 'а' && str[0] <= 'я')
 	{
@@ -563,20 +536,39 @@ void order(string path)
 			cout << tovars[j].quantity;
 			cout << tovars[j].si << endl;
 			cout << tovars[j].price << "р." << endl << endl;
+			string str;
 			if (path == "Vegetables.txt" || path == "Fruits.txt" || path == "Berries.txt" || path == "Greenery.txt")
 			{
+				double a;
 				cout << "Введите количество (кг): ";
-				cin >> tovars[j].count;
+				cin >> a;
 				cin.ignore();
+				tovars[j].count = a;
 				clear(); cout << "Количество: " << tovars[j].count << "кг." << endl;
 			}
 			else
 			{
-				cout << "Введите количество (шт.): ";
-				int a;
-				cin >> a;
-				cin.ignore();
-				tovars[j].count = (double)a;
+				while (true) {
+					cout << "Введите количество (шт): ";
+					getline(cin, str);
+					if (size(str) == 0) {
+						clear(); continue;
+					}
+					else {
+						string c = "0123456789";
+						int k = 0;
+						for (int i = 0; i < size(str); i++) {
+							int index;
+							index = c.find(str[i]);
+							if (index >= 0) k++;
+						}
+						if (k == size(str)) break;
+						else {
+							clear(); continue;
+						}
+					}
+				}
+				tovars[j].count = stoi(str);
 				clear(); cout << "Количество: " << tovars[j].count << " шт." << endl;
 			}
 			cout << "Цена: " << tovars[j].price * tovars[j].count << "р." << endl << endl;
@@ -615,6 +607,7 @@ void order(string path)
 						record << tovars[j].si2 << endl;
 						record << tovars[j].price * tovars[j].count << endl;
 					}
+					system("cls");
 					cout << "Товар добавлен в корзину" << endl;
 					cout << "[1] Перейти в корзину" << endl;
 					cout << "[Esc] Вернуться в продуктовый каталог" << endl;
@@ -958,12 +951,12 @@ void changeCount()
 							flag1 = true;
 							basket();
 							break;
-						}	
+						}
 					}
-				}		
-				
 				}
-				
+
+				}
+
 			}
 		}
 		else
@@ -993,7 +986,7 @@ void basket()
 	system("cls");
 	basketInfo();
 	orderCost = 0;
-	if (tovarsNum == 0) 
+	if (tovarsNum == 0)
 	{
 		cout << "Ваша корзина пуста" << endl << endl;
 		char choose;
@@ -1012,7 +1005,7 @@ void basket()
 			}
 		}
 	}
-	else 
+	else
 	{
 		for (int i = 0; i < tovarsNum; i++)
 		{
@@ -1057,6 +1050,7 @@ void basket()
 void catalog()
 {
 	system("cls");
+	cout << "\t\t\tПродуктовый каталог" << endl;
 	cout << "[1] Овощи и фрукты" << endl;
 	cout << "[2] Молоко, яйца" << endl;
 	cout << "[3] Хлеб" << endl;
@@ -1069,7 +1063,7 @@ void catalog()
 	cout << "[Esc] Главное меню" << endl;
 	char choose;
 	bool flag = false;
-	while(flag == false)
+	while (flag == false)
 	{
 		choose = _getch();
 		switch (choose)
@@ -1078,39 +1072,39 @@ void catalog()
 			flag = true;
 			catalogFruitsVegetables();
 			break;
-		case 50: 
+		case 50:
 			flag = true;
 			show("MilkEggs.txt");
 			break;
-		case 51: 
+		case 51:
 			flag = true;
 			show("Bread.txt");
 			break;
-		case 52: 
+		case 52:
 			flag = true;
 			catalogMeat();
 			break;
-		case 53: 
+		case 53:
 			flag = true;
 			show("Drinks.txt");
 			break;
-		case 54: 
+		case 54:
 			flag = true;
 			show("Cereals.txt");
 			break;
-		case 55: 
+		case 55:
 			flag = true;
 			show("Pasta.txt");
 			break;
-		case 56: 
+		case 56:
 			flag = true;
 			show("Sweets.txt");
 			break;
-		case 57: 
+		case 57:
 			flag = true;
 			show("OilSauces.txt");
 			break;
-		case 27: 
+		case 27:
 			flag = true;
 			system("cls");
 			mainMenu();
@@ -1217,14 +1211,13 @@ void userProfile()
 			cout << "[2]" << "Имя: " << users[g].name << endl;
 			cout << "[3]" << "Отчество: " << users[g].patronymic << endl;
 			cout << "[4]" << "Пол: " << users[g].sex << endl;
-			cout << "[5]" << "Дата рождения: " << users[g].birthDate << endl;
-			cout << "[6]" << "Страна: " << users[g].country << endl;
-			cout << "[7]" << "Город: " << users[g].city << endl;
-			cout << "[8]" << "Улица: " << users[g].street << endl;
-			cout << "[9]" << "Дом: " << users[g].house << endl;
-			cout << "[10]" << "Квартира: " << users[g].apart << endl;
-			cout << "[11]" << "Номер телефона: +375" << users[g].phone << endl;
-			cout << "[12]" << "Пароль" << endl << endl;
+			cout << "[5]" << "Страна: " << users[g].country << endl;
+			cout << "[6]" << "Город: " << users[g].city << endl;
+			cout << "[7]" << "Улица: " << users[g].street << endl;
+			cout << "[8]" << "Дом: " << users[g].house << endl;
+			cout << "[9]" << "Квартира: " << users[g].apart << endl;
+			cout << "[10]" << "Номер телефона: +375" << users[g].phone << endl;
+			cout << "[11]" << "Пароль" << endl << endl;
 			int point;
 			bool flag1;
 			flag1 = false;
@@ -1246,15 +1239,15 @@ void userProfile()
 					break;
 				case 1:
 					flag1 = true;
-					writeStr("Фамилия", users[g].surname, "every");
+					writeStr("Фамилия", users[g].surname, "every", "user");
 					break;
 				case 2:
 					flag1 = true;
-					writeStr("Имя", users[g].name, "every");
+					writeStr("Имя", users[g].name, "every", "user");
 					break;
 				case 3:
 					flag1 = true;
-					writeStr("Отчество", users[g].patronymic, "every");
+					writeStr("Отчество", users[g].patronymic, "every", "user");
 					break;
 				case 4:
 					flag1 = true;
@@ -1262,15 +1255,15 @@ void userProfile()
 					break;
 				case 5:
 					flag1 = true;
-					writeStr("Страна", users[g].country, "first");
+					writeStr("Страна", users[g].country, "first", "user");
 					break;
 				case 6:
 					flag1 = true;
-					writeStr("Город", users[g].city, "first");
+					writeStr("Город", users[g].city, "first", "user");
 					break;
 				case 7:
 					flag1 = true;
-					writeStr("Улица", users[g].street, "first");
+					writeStr("Улица", users[g].street, "first", "user");
 					break;
 				case 8:
 					flag1 = true;
@@ -1282,7 +1275,7 @@ void userProfile()
 					break;
 				case 10:
 					flag1 = true;
-					writePhoneNum("Номер телефона: +375", users[g].phone, "reg", "nelogin");
+					writePhoneNum("Номер телефона: +375", users[g].phone, "user", "nelogin");
 					break;
 				case 11:
 					flag = true;
@@ -1334,7 +1327,7 @@ void catalogPlus()
 		choose = _getch();
 		switch (choose)
 		{
-		case 49: 
+		case 49:
 			flag = true;
 			plus_catalogFruitsVegetables();
 			break;
@@ -1352,11 +1345,11 @@ void catalogPlus()
 				conf = _getch();
 				switch (conf)
 				{
-				case 49: 
+				case 49:
 					flag1 = true;
 					add("MilkEggs.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1382,7 +1375,7 @@ void catalogPlus()
 					flag1 = true;
 					add("Bread.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1408,11 +1401,11 @@ void catalogPlus()
 				conf = _getch();
 				switch (conf)
 				{
-				case 49: 
+				case 49:
 					flag1 = true;
 					add("Drinks.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1434,11 +1427,11 @@ void catalogPlus()
 				conf = _getch();
 				switch (conf)
 				{
-				case 49: 
+				case 49:
 					flag1 = true;
 					add("Cereals.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1460,11 +1453,11 @@ void catalogPlus()
 				conf = _getch();
 				switch (conf)
 				{
-				case 49: 
+				case 49:
 					flag1 = true;
 					add("Pasta.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1486,11 +1479,11 @@ void catalogPlus()
 				conf = _getch();
 				switch (conf)
 				{
-				case 49: 
+				case 49:
 					flag1 = true;
 					add("Sweets.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1516,7 +1509,7 @@ void catalogPlus()
 					flag1 = true;
 					add("OilSauces.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					catalogPlus();
 					break;
@@ -1602,7 +1595,7 @@ void catalogMinus()
 void catalogFruitsVegetables()
 {
 	system("cls");
-	cout << "\t\t\t Продуктовый каталог" << endl;
+	cout << "\t\t\t Овощи и фрукты" << endl;
 	cout << "[1] Овощи" << endl;
 	cout << "[2] Фрукты" << endl;
 	cout << "[3] Ягоды" << endl;
@@ -1610,28 +1603,28 @@ void catalogFruitsVegetables()
 	cout << "[Esc] Назад" << endl;
 	char choose;
 	bool flag = false;
-	while(flag == false)
+	while (flag == false)
 	{
 		choose = _getch();
 		switch (choose)
 		{
-		case 49: 
+		case 49:
 			flag = true;
 			show("Vegetables.txt");
 			break;
-		case 50: 
+		case 50:
 			flag = true;
 			show("Fruits.txt");
 			break;
-		case 51: 
+		case 51:
 			flag = true;
 			show("Berries.txt");
 			break;
-		case 52: 
+		case 52:
 			flag = true;
 			show("Greenery.txt");
 			break;
-		case 27: 
+		case 27:
 			flag = true;
 			system("cls");
 			catalog();
@@ -1643,7 +1636,7 @@ void catalogFruitsVegetables()
 void order_catalogFruitsVegetables()
 {
 	system("cls");
-	cout << "\t\t\t Продуктовый каталог" << endl;
+	cout << "\t\t\t Овощи и фрукты" << endl;
 	cout << "[1] Овощи" << endl;
 	cout << "[2] Фрукты" << endl;
 	cout << "[3] Ягоды" << endl;
@@ -1697,7 +1690,7 @@ void plus_catalogFruitsVegetables()
 		choose = _getch();
 		switch (choose)
 		{
-		case 49: 
+		case 49:
 		{
 			flag = true;
 			system("cls");
@@ -1713,7 +1706,7 @@ void plus_catalogFruitsVegetables()
 				{
 				case 49:
 					flag1 = true;
-					add("Vagetables.txt");
+					add("Vegetables.txt");
 					break;
 				case 50:
 					flag1 = true;
@@ -1747,7 +1740,7 @@ void plus_catalogFruitsVegetables()
 			}
 			break;
 		}
-		case 51: 
+		case 51:
 		{
 			flag = true;
 			system("cls");
@@ -1795,7 +1788,7 @@ void plus_catalogFruitsVegetables()
 			}
 			break;
 		}
-		case 27: 
+		case 27:
 			flag = true;
 			system("cls");
 			catalogPlus();
@@ -1848,39 +1841,39 @@ void minus_catalogFruitsVegetables()
 void catalogMeat()
 {
 	system("cls");
-	cout << "\t\t\t Продуктовый каталог" << endl;
+	cout << "\t\t\t Мясо" << endl;
 	cout << "[1] Cвинина" << endl;
 	cout << "[2] Курица" << endl;
 	cout << "[3] Колбаса" << endl << endl;
 	cout << "[Esc] Назад" << endl;
 	char choose;
 	bool flag = false;
-	while(flag == false)
+	while (flag == false)
 	{
 		choose = _getch();
-			switch (choose)
-			{
-			case 49: show("Pork.txt");
-				flag = true;
-				break;
-			case 50: show("Chicken.txt");
-				flag = true;
-				break;
-			case 51: show("Sauseges.txt");
-				flag = true;
-				break;
-			case 27: system("cls");
-				flag = true;
-				catalog();
-				break;
-			}
+		switch (choose)
+		{
+		case 49: show("Pork.txt");
+			flag = true;
+			break;
+		case 50: show("Chicken.txt");
+			flag = true;
+			break;
+		case 51: show("Sauseges.txt");
+			flag = true;
+			break;
+		case 27: system("cls");
+			flag = true;
+			catalog();
+			break;
+		}
 	}
 }
 
 void order_catalogMeat()
 {
 	system("cls");
-	cout << "\t\t\t Продуктовый каталог" << endl;
+	cout << "\t\t\t Мясо" << endl;
 	cout << "[1] Cвинина" << endl;
 	cout << "[2] Курица" << endl;
 	cout << "[3] Колбаса" << endl << endl;
@@ -1942,7 +1935,7 @@ void plus_catalogMeat()
 					flag1 = true;
 					add("Pork.txt");
 					break;
-				case 50: 
+				case 50:
 					flag1 = true;
 					plus_catalogMeat();
 					break;
@@ -1998,7 +1991,7 @@ void plus_catalogMeat()
 			}
 			break;
 		}
-		case 27: 
+		case 27:
 			flag = true;
 			system("cls");
 			catalogPlus();
@@ -2039,24 +2032,50 @@ void minus_catalogMeat()
 	}
 }
 
+void showUsers() 
+{
+	userInfo();
+	system("cls");
+	for (int i = 0; i < usersNum; i++)
+	{
+		cout << "Фамилия: " << users[i].surname << endl;
+		cout << "Имя: " << users[i].name << endl;
+		cout << "Отчество: " << users[i].patronymic << endl;
+		cout << "Пол: " << users[i].sex << endl;
+		cout << "Дата рождения: " << users[i].birthDate << endl;
+		cout << "Страна: " << users[i].country << endl;
+		cout << "Город: " << users[i].city << endl;
+		cout << "Улица: " << users[i].street << endl;
+		cout << "Дом: " << users[i].house << endl;
+		cout << "Квартира: " << users[i].apart << endl;
+		cout << "Номер телефона: +375" << users[i].phone << endl << endl;
+	}
+	cout << "Общее число пользователей: " << usersNum << endl << endl;
+	char choose;
+	bool flag;
+	flag = false;
+	cout << "[Esc] Вернуться в меню" << endl;
+	do choose = _getch(); while (choose != 27);
+	adminMenu();
+}
+
 void registration()
 {
-	string surname, name, patronymic, sex, birthDate, country = "Беларусь", city, street, house, apart,
-	phone, password;
+	string surname, name, patronymic, sex, birthDate, country, city, street, house, apart,
+		phone, password;
 	system("cls");
-
-	cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
+	cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl;
 	cout << "Введите 0 чтобы вернуться в главное меню" << endl;
-	cout << "\033[21F";
+	cout << "\033[22F";
 	cout << "\t\t\t Регистрация" << endl;
-	writeStr("Фамилия", surname, "every");
-	writeStr("Имя", name, "every");
-	writeStr("Отчество", patronymic, "every");
+	writeStr("Фамилия", surname, "every", "reg");
+	writeStr("Имя", name, "every", "reg");
+	writeStr("Отчество", patronymic, "every", "reg");
 	chooseSex(sex);
 	writeBirthDate(birthDate);
-	cout << "Страна: " << country << endl;
-	writeStr("Город", city, "first");
-	writeStr("Улица", street, "first");
+	writeStr("Страна", country, "first", "reg");
+	writeStr("Город", city, "first", "reg");
+	writeStr("Улица", street, "first", "reg");
 	writeHouse(house);
 	writeApart(apart);
 	writePhoneNum("Номер телефона: +375", phone, "reg", "main");
@@ -2121,65 +2140,49 @@ void registration()
 	}
 }
 
-void writeStr(string x, string& y, string z)
+void writeStr(string x, string& y, string z, string where)
 {
-	cout << x << ": ";
-	getline(cin, y);
-	if (size(y) != 0)
-	{
-		if (y == "0")
-		{
-			if (z == "rec")
-				mainMenu();
-			else if (z == "user")
-				userMenu;
+	while (true) {
+		cout << x << ": ";
+		getline(cin, y);
+		if (y == "0") {
+			if (where == "reg") mainMenu();
+			else if (where == "user") userMenu();
+			else if (where == "admin") adminMenu();
 		}
-		else
-		{
-			if (z == "every")
-			{
-				if (y[0] >= 'а' && y[0] <= 'я')
-				{
-					y[0] = 'А' + (y[0] - 'а');
-				}
-				if (y[0] == 'ё')
-				{
-					y[0] = 'Ё';
-				}
-				for (int i = 0; i < size(y); i++)
-				{
-					if (y[i] == ' ' || y[i] == '-')
-					{
-						if (y[i + 1] >= 'а' && y[i + 1] <= 'я')
-						{
-							y[i + 1] = 'А' + (y[i + 1] - 'а');
-						}
-						if (y[i + 1] == 'ё')
-						{
-							y[i + 1] = 'Ё';
-						}
+		if (size(y) == 0) {
+			clear();
+			continue;
+		}
+		string correctstring = "ёйцукенгшщзхъфывапролджэячсмитьбюЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ- ";
+		int k = 0;
+		for (int i = 0; i < size(y); i++) {
+			int index;
+			index = correctstring.find(y[i]);
+			if (index >= 0) k++;
+		}
+		if (k == size(y)) {
+			if (z == "every") {
+				if (y[0] >= 'а' && y[0] <= 'я') y[0] = 'А' + (y[0] - 'а');
+				if (y[0] == 'ё') y[0] = 'Ё';
+				for (int i = 0; i < size(y); i++) {
+					if (y[i] == ' ' || y[i] == '-') {
+						if (y[i + 1] >= 'а' && y[i + 1] <= 'я') y[i + 1] = 'А' + (y[i + 1] - 'а');
+						if (y[i + 1] == 'ё') y[i + 1] = 'Ё';
 					}
 				}
 			}
-			else if (z == "first")
-			{
-				if (y[0] >= 'а' && y[0] <= 'я')
-				{
-					y[0] = 'А' + (y[0] - 'а');
-				}
-				if (y[0] == 'ё')
-				{
-					y[0] = 'Ё';
-				}
+			else if (z == "first") {
+				if (y[0] >= 'а' && y[0] <= 'я') y[0] = 'А' + (y[0] - 'а');
+				if (y[0] == 'ё') y[0] = 'Ё';
 			}
+			clear();
+			cout << x << ": " << y << "\n";
+			break;
 		}
-		clear();
-		cout << x << ": " << y << endl;
-	}
-	else
-	{
-		clear();
-		writeStr(x, y, z);
+		else {
+			clear(); continue;
+		}
 	}
 }
 
@@ -2213,103 +2216,71 @@ void chooseSex(string& x)
 
 void writeBirthDate(string& x)
 {
-	cout << "Дата рождения (00 00 0000): ";
-	string num = "0123456789 ";
-	getline(cin, x);
-	if (size(x) == 10)
-	{
-		if (x == "0")
-		{
+	while (true) {
+		cout << "Дата рождения (00 00 0000): ";
+		string Numbers = "0123456789 ";
+		getline(cin, x);
+		if (x == "0") {
 			mainMenu();
 		}
-		else
-		{
+		if (size(x) == 10) {
 			int k = 0;
-			if (x[2] == ' ' && x[5] == ' ' && size(x) == 10)
-			{
-				for (int i = 0; i < size(x); i++)
-				{
+			if (x[2] == ' ' && x[5] == ' ' && size(x) == 10) {
+				for (int i = 0; i < size(x); i++) {
 					int index;
-					index = num.find(x[i]);
+					index = Numbers.find(x[i]);
 					if (index >= 0) k++;
 				}
-				if (k == 10)
-				{
+				if (k == 10) {
 					SYSTEMTIME t;
 					GetLocalTime(&t);
 					string d, m, y;
-					d = x.substr(0, 2);
-					m = x.substr(3, 2);
-					y = x.substr(6);
+					d = x.substr(0, 2); m = x.substr(3, 2); y = x.substr(6);
 					if (((stoi(m) == 1 || stoi(m) == 3 || stoi(m) == 5 || stoi(m) == 7 || stoi(m) == 8 || stoi(m) == 10 || stoi(m) == 12) && stoi(d) <= 31)
 						|| ((stoi(m) == 4 || stoi(m) == 6 || stoi(m) == 9 || stoi(m) == 11) && stoi(d) <= 30)
-						|| (stoi(m) == 2 && stoi(d) <= 29))
-					{
+						|| (stoi(m) == 2 && stoi(d) <= 29)) {
 						int age;
-						if (stoi(y) < t.wYear)
-						{
-							if (stoi(m) > t.wMonth)
-								age = t.wYear - stoi(y) - 1;
-							else if (stoi(m) < t.wMonth)
-								age = t.wYear - stoi(y);
-							else if (stoi(m) == t.wMonth)
-							{
-								if (stoi(d) > t.wDay)
-									age = t.wYear - stoi(y) - 1;
-								if (stoi(d) <= t.wDay)
-									age = t.wYear - stoi(y);
+						if (stoi(y) < t.wYear) {
+							if (stoi(m) > t.wMonth)	age = t.wYear - stoi(y) - 1;
+							else if (stoi(m) < t.wMonth) age = t.wYear - stoi(y);
+							else if (stoi(m) == t.wMonth) {
+								if (stoi(d) > t.wDay) age = t.wYear - stoi(y) - 1;
+								if (stoi(d) <= t.wDay) age = t.wYear - stoi(y);
 							}
-							if (age >= 14 && age <= 100)
-							{
+							if (age >= 16 && age <= 120) {
 								clear();
 								cout << "Дата рождения: ";
 								x = d + '.' + m + '.' + y;
 								cout << x << endl;
+								break;
 							}
-							else if (age > 100 || age < 1)
-							{
-								clear();
-								writeBirthDate(x);
+							else if (age > 120 || age < 1) {
+								clear(); continue;
 							}
-							else if (age >= 1 && age < 14)
-							{
-								clear();
+							else if (age >= 1 && age < 16) {
 								cout << "Пользоваться услугами нашего сервиса можно только с 14-ти лет." << endl << "Нажмите любую клавишу чтобы повторить." << endl;
-								_getch();
-								clear();
-								clear();
-								writeBirthDate(x);
+								_getch(); clear(); clear(); clear(); continue;
 							}
 						}
-						else
-						{
-							clear();
-							writeBirthDate(x);
+						else {
+							clear(); continue;
 						}
 					}
-					else
-					{
-						clear();
-						writeBirthDate(x);
+					else {
+						clear(); continue;
 					}
 				}
-				else
-				{
-					clear();
-					writeBirthDate(x);
+				else {
+					clear(); continue;
 				}
 			}
-			else
-			{
-				clear();
-				writeBirthDate(x);
+			else {
+				clear(); continue;
 			}
 		}
-	}
-	else
-	{
-		clear();
-		writeBirthDate(x);
+		else {
+			clear(); continue;
+		}
 	}
 }
 
@@ -2321,7 +2292,7 @@ void writeHouse(string& x)
 	{
 		if (x == "0")
 		{
-			mainMenu;
+			mainMenu();
 		}
 		else
 		{
@@ -2398,9 +2369,8 @@ void writeApart(string& x)
 }
 
 void writePhoneNum(string y, string& x, string type, string where)
-{;
+{
 	userInfo();
-
 	cout << y;
 	getline(cin, x);
 	if (size(x) != 0)
@@ -2455,7 +2425,7 @@ void writePhoneNum(string y, string& x, string type, string where)
 							flag = true;
 							clear();
 							clear();
-							clear(); 
+							clear();
 							clear();
 							writePhoneNum(y, x, type, where);
 							break;
@@ -2561,8 +2531,8 @@ void customAdress()
 	system("cls");
 	string city, street, house, apart;
 	cout << "Введите новый адрес доставки: " << endl;
-	writeStr("Город", city, "first");
-	writeStr("Улица", street, "first");
+	writeStr("Город", city, "first", "user");
+	writeStr("Улица", street, "first", "user");
 	writeHouse(house);
 	writeApart(apart);
 	cout << "г." << city << " ул." << street << " д." << house << " кв." << apart << endl;
@@ -2658,9 +2628,9 @@ void login()
 	string userPhone, userPassword;
 	int k = 0, j;
 	system("cls");
-	cout << endl << endl << endl << endl;
+	cout << endl << endl << endl << endl << endl << endl << endl;
 	cout << "Введите 0 чтобы вернуться в главное меню" << endl;
-	cout << "\033[7F";
+	cout << "\033[10F";
 	cout << "\t\t\t Авторизация" << endl;
 	writePhoneNum("Номер телефона: +375", userPhone, "search", "main");
 	for (int i = 0; i < usersNum; i++)
@@ -2674,41 +2644,28 @@ void login()
 	}
 	if (k != 0)
 	{
-		writePassword(userPassword);
-		if (userPassword == users[j].password)
+		int n = 2;
+		while (true)
 		{
-			cout << "Вход выполнен";
-			userMenu();
-		}
-		else
-		{
-			cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
-			_getch();
-			clear();
-			clear();
-			clear();
-			writePassword(userPassword);
-			if (userPassword == users[j].password)
-			{
-				cout << "Вход выполнен";
-				userMenu();
+			cout << "Пароль: ";
+			getline(cin, userPassword);
+			if (size(userPassword) == 0) {
+				clear(); continue;
 			}
+			if (userPassword == "0") {
+				mainMenu(); break;
+			}
+			if (userPassword == users[j].password) userMenu();
 			else
 			{
-				cout << "Неверный пароль. У вас осталось 1 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
+				if (n == 2) cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите Enter чтобы повторить попытки." << endl;
+				else cout << "Неверный пароль. У вас осталось 1 попытка" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
+				if (n == 0) {
+					mainMenu(); break;
+				}
+				n--;
 				_getch();
-				clear();
-				clear();
-				clear();
-				writePassword(userPassword); 
-				if (userPassword == users[j].password)
-				{
-					cout << "Вход выполнен";
-					userMenu();
-				}
-				else
-				{
-				}
+				clear(); clear(); clear(); continue;
 			}
 		}
 	}
@@ -2723,20 +2680,23 @@ void login()
 void adminLogin()
 {
 	adminInfo();
-
-	string login, password;
+	string adminsLogin, adminPassword;
 	int k = 0, j;
 	system("cls");
-	cout << endl << endl << endl << endl;
+	cout << endl << endl << endl << endl << endl << endl << endl;
 	cout << "Введите 0 чтобы вернуться в главное меню" << endl;
-	cout << "\033[7F";
+	cout << "\033[10F";
 	cout << "\t\t\t Вход от имени администратора" << endl;
-	cout << "Логин: ";
-	cin >> login;
-	cin.ignore();
+	do
+	{
+		cout << "Логин: ";
+		getline(cin, adminsLogin);
+		if (size(adminsLogin) == 0) clear();
+	} while (size(adminsLogin) == 0);
+	if (adminsLogin == "0") mainMenu();
 	for (int i = 0; i < adminsNum; i++)
 	{
-		if (login == admins[i].login)
+		if (adminsLogin == admins[i].login)
 		{
 			k++;
 			j = i;
@@ -2744,47 +2704,34 @@ void adminLogin()
 	}
 	if (k != 0)
 	{
-		writePassword(password);
-		if (password == admins[j].password)
+		int n = 2;
+		while (true)
 		{
-			cout << "Вход выполнен";
-			adminMenu();
-		}
-		else
-		{
-			cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
-			_getch();
-			clear();
-			clear();
-			clear();
-			writePassword(password);
-			if (password == admins[j].password)
-			{
-				cout << "Вход выполнен";
-				adminMenu();
+			cout << "Пароль: ";
+			getline(cin, adminPassword);
+			if (size(adminPassword) == 0) {
+				clear(); continue;
 			}
+			if (adminPassword == "0") {
+				mainMenu(); break;
+			}
+			if (adminPassword == admins[j].password) adminMenu();
 			else
 			{
-				cout << "Неверный пароль. У вас осталось 1 попытки" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
+				if (n == 2) cout << "Неверный пароль. У вас осталось 2 попытки" << endl << "Нажмите Enter чтобы повторить попытки." << endl;
+				else cout << "Неверный пароль. У вас осталось 1 попытка" << endl << "Нажмите Enter чтобы повторить попытку." << endl;
+				if (n == 0) {
+					mainMenu(); break;
+				}
+				n--;
 				_getch();
-				clear();
-				clear();
-				clear();
-				writePassword(password);
-				if (password == users[j].password)
-				{
-					cout << "Вход выполнен";
-					adminMenu();
-				}
-				else
-				{
-				}
+				clear(); clear(); clear(); continue;
 			}
 		}
 	}
 	else
 	{
-		cout << "Пользователь с этим номером не найден." << endl << "Нажмите Enter чтобы повторить." << endl;
+		cout << "Данный логин не найден." << endl << "Нажмите Enter чтобы повторить." << endl;
 		_getch();
 		adminLogin();
 	}
